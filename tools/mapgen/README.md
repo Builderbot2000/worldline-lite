@@ -60,9 +60,37 @@ node --test tools/mapgen          # determinism + seam + adjacency tests
 ```
 
 You author **intent**, never coordinates:
-- **regions** grow by *multiplicatively-weighted Voronoi* from their `seed`, sized by `weight`.
-  `adjacent` is a declared floor — `generate_geography` reports any declared adjacency that didn't
-  actually come out so you can nudge seeds.
+- **regions** grow by *multiplicatively-weighted Voronoi*, sized by `weight`. `adjacent` is a
+  declared floor — `generate_geography` reports any declared adjacency that didn't actually come out.
+
+### Authoring semantically — let the layout solver place regions
+
+`seed` and `weight` are **optional**. Omit them and the **layout solver** ([`layout.mjs`](layout.mjs))
+places each region for you by solving the relationship graph — so the agent team authors *meaning*
+(who borders whom, who's north of whom, relative size) and the algorithm handles the *technical*
+placement. No more hand-tuning `[x,y]` and re-running until adjacency comes out.
+
+```jsonc
+{
+  "regions": [
+    { "id": "arlin", "name": "Arlin Dome", "terrain": "arid inland corridor",
+      "size": "large", "adjacent": ["helion", "brinewake"] }   // no seed / weight / label_at
+  ],
+  "relations": [
+    { "type": "north_of", "a": "helion", "b": "arlin" }        // cardinal bias: north_of/south_of/east_of/west_of
+  ]
+}
+```
+
+- **size** → weight: `tiny`/`small`/`medium`/`large`/`huge` (or a raw number). Default `medium`.
+- **relations** add a soft cardinal bias (respecting `space.y_axis`). Other relation types (e.g.
+  `across_sea`) are carried as semantic notes and exert no layout force in this strategy.
+- Method: deterministic **Fruchterman–Reingold** force-directed layout — adjacency edges attract,
+  all regions repel, positions clamped into the land box (extent minus the sea band), seeded from
+  the master `seed`. Same lever → same layout.
+- **Mixable**: regions that *do* carry an explicit `seed` are treated as **pinned anchors** the
+  solver lays the rest out around. A fully-authored v1 lever (every seed given) is unchanged,
+  byte-for-byte — the solver is a no-op.
 - **sea** is a band along the named frame `edges`, `inset` units deep. Coastal regions get a coast.
 - **rivers** run from a region toward a `mouth` frame edge (`N`/`S`/`E`/`W`), meandering.
 - **features**: `city`→region centre, `harbor`→nearest coast vertex of its `region`,
@@ -87,6 +115,7 @@ for anything not pre-colored. Edit the baked `colors` to curate.
 | File | Role |
 |---|---|
 | `refine.mjs` | seeded fractal edge refinement + seam-free edge collection (the geometry core) |
+| `layout.mjs` | layout solver — place region seeds/weights from the adjacency/relations graph (force-directed) |
 | `voronoi.mjs` | grow region polygons from seeds (weighted Voronoi → shared arcs → simplify) |
 | `rivers.mjs` | deterministic river courses |
 | `features.mjs` | deterministic feature placement on real coasts / borders |

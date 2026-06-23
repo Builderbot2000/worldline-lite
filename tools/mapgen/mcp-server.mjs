@@ -23,10 +23,12 @@ const TOOLS = [
     name: "generate_geography",
     description:
       "Generate beautiful geography for a run from its genesis.json seed lever " +
-      "(region seeds + weights + adjacency + sea band + river/feature intents). " +
-      "Grows region polygons (weighted Voronoi), refines coasts/borders, derives " +
-      "rivers, and places features, then writes runs/<run>/geometry.json (and a " +
-      "catalog map.json). Deterministic: same input → byte-identical output.",
+      "(regions + adjacency/relations + sea band + river/feature intents). Region " +
+      "seeds/weights are OPTIONAL — omit them and the layout solver places regions " +
+      "from the adjacency graph (author meaning, not coordinates). Grows region " +
+      "polygons (weighted Voronoi), refines coasts/borders, derives rivers, and " +
+      "places features, then writes runs/<run>/geometry.json (and a catalog " +
+      "map.json). Deterministic: same input → byte-identical output.",
     inputSchema: {
       type: "object",
       required: ["run"],
@@ -43,7 +45,8 @@ const TOOLS = [
     name: "validate_genesis",
     description:
       "Lint a run's genesis.json seed lever WITHOUT writing anything: checks unique " +
-      "region ids, in-bounds seeds, and symmetric adjacency. Returns { ok, errors, warnings }.",
+      "region ids, in-bounds seeds (when provided — seeds are optional), and symmetric " +
+      "adjacency. Returns { ok, errors, warnings }.",
     inputSchema: {
       type: "object",
       required: ["run"],

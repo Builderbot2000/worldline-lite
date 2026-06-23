@@ -9,6 +9,7 @@ import { growRegions } from "./voronoi.mjs";
 import { computeGeometry, hashStr } from "./refine.mjs";
 import { deriveRivers } from "./rivers.mjs";
 import { placeFeatures } from "./features.mjs";
+import { resolveSeeds } from "./layout.mjs";
 
 const round2 = (p) => [Math.round(p[0] * 100) / 100, Math.round(p[1] * 100) / 100];
 
@@ -46,9 +47,13 @@ export function validateGenesis(g) {
     if (!r.id) errors.push("a region is missing id");
     if (ids.has(r.id)) errors.push(`duplicate region id "${r.id}"`);
     ids.add(r.id);
-    if (!Array.isArray(r.seed) || r.seed.length !== 2) errors.push(`region "${r.id}" needs seed [x,y]`);
-    else if (r.seed[0] < x0 || r.seed[0] > x0 + w || r.seed[1] < y0 || r.seed[1] > y0 + h)
-      warnings.push(`region "${r.id}" seed is outside extent`);
+    // seed is OPTIONAL: omit it to let the layout solver place the region from
+    // its adjacency/relations graph. If provided, it must be a valid in-bounds [x,y].
+    if (r.seed !== undefined) {
+      if (!Array.isArray(r.seed) || r.seed.length !== 2) errors.push(`region "${r.id}" seed must be [x,y] (or omit it to auto-place)`);
+      else if (r.seed[0] < x0 || r.seed[0] > x0 + w || r.seed[1] < y0 || r.seed[1] > y0 + h)
+        warnings.push(`region "${r.id}" seed is outside extent`);
+    }
   }
   if (!(g.regions || []).length) errors.push("no regions");
   // adjacency symmetry (declared)
@@ -63,7 +68,12 @@ export function validateGenesis(g) {
 }
 
 // ---- build artifacts (pure: genesis object → { geometry, map, summary }) ----
-export function buildArtifacts(genesis, rawString) {
+export function buildArtifacts(authored, rawString) {
+  // Resolve the SEMANTIC lever into a concrete one: fill any missing region
+  // seeds/weights by solving the adjacency/relations graph (layout.mjs). A no-op
+  // for fully-authored v1 levers, so their output stays byte-identical. The
+  // input_hash below still hashes the AUTHORED lever, not the resolved one.
+  const genesis = resolveSeeds(authored);
   const grown = growRegions(genesis);
   const detail = genesis.space.detail;
   const geo = computeGeometry(grown.parts, detail);
