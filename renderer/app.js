@@ -15,18 +15,48 @@ const params = new URLSearchParams(location.search);
 const RUN = params.get("run") || "_example";
 
 // ---- Renderer-owned palettes & ramps (layers reference these by name) ------
+// Only CLOSED, renderer-owned enums live here. Open, store-owned vocabularies
+// (terrain and the like) are never enumerated in renderer code: the generator
+// bakes their colors into `layer.colors`, and `categoryColor` covers anything
+// not handed a color — so the renderer is agnostic to the vocabulary.
 const PALETTES = {
   stance:  { player: "#c9a44a", hostile: "#b4513f", friendly: "#4f8a6b", neutral: "#6b6150", default: "#6b6150" },
-  terrain: {
-    "hilly coast": "#7a6a4a", "river kingdom": "#5a6a78", mountains: "#6d6358",
-    "mercantile coast": "#6a7a6a", default: "#5b5444",
-  },
 };
 const RAMPS = {
   "calm-crisis": ["#4f7a5e", "#b4513f"],   // low → high (e.g. unrest)
   default:       ["#5a6a78", "#c9a44a"],
 };
-const FEATURE_ICONS = { harbor: "⚓", chokepoint: "⛰", city: "▣", default: "◆" };
+const NODATA = "#403b34";                  // region present, value absent
+
+// Semantic icons for known feature kinds; unknown kinds get a distinct,
+// deterministic glyph (never a single shared fallback) via `iconFor`.
+const FEATURE_ICONS = { harbor: "⚓", chokepoint: "⛰", city: "▣" };
+const GLYPHS = ["◆", "◈", "▲", "⬟", "⬢", "✦", "❖", "⬣", "◉", "⬠", "✚", "⯁"];
+
+// FNV-1a string hash → 32-bit unsigned. Mirrors tools/mapgen/refine.mjs.
+function hashStr(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return h >>> 0;
+}
+// Deterministic muted distinct hue from a category string, with no knowledge of
+// any vocabulary. MUST match tools/mapgen/generate.mjs `categoryColor` so a
+// baked color and a fallback color agree for the same string.
+function categoryColor(s) {
+  const h = hashStr(String(s));
+  return hslHex(h % 360, 0.24, 0.38 + ((h >>> 9) % 10) / 100);
+}
+function hslHex(h, s, l) {
+  const c = (1 - Math.abs(2 * l - 1)) * s, hp = h / 60;
+  const x = c * (1 - Math.abs((hp % 2) - 1));
+  const [r, g, b] =
+    hp < 1 ? [c, x, 0] : hp < 2 ? [x, c, 0] : hp < 3 ? [0, c, x] :
+    hp < 4 ? [0, x, c] : hp < 5 ? [x, 0, c] : [c, 0, x];
+  const m = l - c / 2;
+  const to = (v) => Math.round((v + m) * 255).toString(16).padStart(2, "0");
+  return "#" + to(r) + to(g) + to(b);
+}
+const iconFor = (kind) => FEATURE_ICONS[kind] || GLYPHS[hashStr(String(kind)) % GLYPHS.length];
 
 // Which layer types fill regions (one at a time → "base") vs draw on top ("overlay").
 const BASE_TYPES = ["choropleth", "heatmap"];
@@ -87,7 +117,7 @@ function getLayers() {
   if (MAP.layers && MAP.layers.length) return MAP.layers;
   const out = [
     { id: "graticule", name: "Grid", type: "graticule", on: true },
-    { id: "terrain", name: "Geography", type: "choropleth", source: "map.regions[].terrain", palette: "terrain", default: true },
+    { id: "terrain", name: "Geography", type: "choropleth", source: "map.regions[].terrain", default: true },
   ];
   if (STATE.map_overlay && STATE.map_overlay.ownership)
     out.push({ id: "ownership", name: "Political", type: "choropleth", source: "state.map_overlay.ownership", palette: "stance" });
@@ -400,7 +430,7 @@ function drawIcons(svg, layer) {
   for (const f of items || []) {
     if (f.kind === "river" && f.path) { svg.appendChild(path(f.path, "river")); continue; }
     if (f.at) {
-      svg.appendChild(text([f.at[0], f.at[1] + 1], FEATURE_ICONS[f.kind] || FEATURE_ICONS.default, "feature-icon"));
+      svg.appendChild(text([f.at[0], f.at[1] + 1], iconFor(f.kind), "feature-icon"));
       svg.appendChild(text([f.at[0], f.at[1] + 3.6], f.name, "feature-label"));
     }
   }
@@ -531,9 +561,11 @@ function regionValue(layer, region) {
 }
 
 function colorFor(layer, category) {
-  if (layer.colors && category in layer.colors) return layer.colors[category];
-  const pal = PALETTES[layer.palette] || {};
-  return pal[category] ?? pal.default ?? "#5b5444";
+  if (layer.colors && category in layer.colors) return layer.colors[category];   // store-owned (incl. baked)
+  const pal = PALETTES[layer.palette];                                           // closed renderer-owned enum
+  if (category == null) return (pal && pal.default) || NODATA;
+  if (pal) return pal[category] ?? pal.default ?? categoryColor(category);
+  return categoryColor(category);                                                // open vocabulary → distinct hue
 }
 
 function heatColor(layer, v, min, max) {

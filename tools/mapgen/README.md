@@ -76,6 +76,12 @@ byte-identical from both sides (seam-free by construction — the boundary betwe
 same lattice arc, simplified once, then refined once). `map.json` becomes a thin **catalog**
 (ids/name/terrain/adjacent/label_at + the `layers[]` render contract) with a `"geometry"` pointer.
 
+For any choropleth over a region field (e.g. `map.regions[].terrain`), the generator **bakes a
+deterministic color per category** into that layer's `colors` — so a world's terrain vocabulary
+carries its own colors in the data store, and the renderer needs no built-in terrain palette. Same
+category string → same muted hue everywhere; the renderer mirrors the exact function as its fallback
+for anything not pre-colored. Edit the baked `colors` to curate.
+
 ## Files
 
 | File | Role |

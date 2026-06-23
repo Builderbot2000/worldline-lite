@@ -77,8 +77,8 @@ abstract (any units; the `viewBox` defines the canvas).
   ]
 }
 ```
-Feature `kind`s with built-in icons: `harbor ⚓`, `chokepoint ⛰`, `city ▣`, else `◆`; `river`
-draws a polyline along `path`.
+Feature `kind`s with built-in icons: `harbor ⚓`, `chokepoint ⛰`, `city ▣`; any other kind gets a
+distinct deterministic glyph (not one shared fallback). `river` draws a polyline along `path`.
 
 ### `space` — the coordinate system (the stable spatial primitive)
 
@@ -123,7 +123,7 @@ Features + Military), so older runs still render.
 ```jsonc
 "layers": [
   { "id": "terrain",   "name": "Geography", "type": "choropleth",
-    "source": "map.regions[].terrain", "palette": "terrain", "default": true },
+    "source": "map.regions[].terrain", "default": true },   // colors baked into the layer by the generator
   { "id": "ownership", "name": "Political",  "type": "choropleth",
     "source": "state.map_overlay.ownership", "palette": "stance" },
   { "id": "unrest",    "name": "Unrest",     "type": "heatmap",
@@ -152,8 +152,14 @@ Features + Military), so older runs still render.
   `state.map_overlay.unrest`). The special form `map.regions[].<field>` reads a field off each
   region. For `choropleth`/`heatmap`, a non-`regions[]` source must resolve to an object keyed by
   region id. Paths are dumb lookups — no expressions.
-- `palette` / `ramp` name a **renderer-owned** color table (`stance`, `terrain`; ramp
-  `calm-crisis`). Use an inline `colors: { category: "#hex" }` only for one-offs.
+- Choropleth colors resolve in this order: inline `colors: { category: "#hex" }` (the data store's
+  own colors — what the generator **bakes** for open vocabularies like terrain), then a named,
+  **renderer-owned** `palette` for *closed* enums (only `stance` today), then a **deterministic
+  per-category hue** for anything still uncolored. So the renderer never needs to know a content
+  vocabulary, and an unknown category gets a distinct color, never a single shared default. `ramp`
+  (heatmap) names a renderer-owned color ramp (`calm-crisis`).
+- Feature `kind`s resolve the same way: known semantic kinds keep their icon (`harbor ⚓`,
+  `chokepoint ⛰`, `city ▣`); an unknown kind gets a distinct deterministic glyph, not one shared fallback.
 - `choropleth`/`heatmap` are **base** layers (one shows at a time, picked by the Base dropdown).
   `icons`/`markers`/`flow` are **overlays** (stack via toggles); set `"on": true` to default-enable.
   `"default": true` picks the initial base layer.

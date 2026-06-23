@@ -12,6 +12,27 @@ import { placeFeatures } from "./features.mjs";
 
 const round2 = (p) => [Math.round(p[0] * 100) / 100, Math.round(p[1] * 100) / 100];
 
+// ---- deterministic category color contract ---------------------------------
+// A string → muted distinct hue, with NO knowledge of any vocabulary. The
+// generator bakes these into the catalog (so colors live in the store next to
+// the values they describe); the renderer mirrors this exact function as its
+// fallback for any category it wasn't handed a color for. The two MUST stay in
+// sync — see renderer/app.js `categoryColor`.
+function hslHex(h, s, l) {
+  const c = (1 - Math.abs(2 * l - 1)) * s, hp = h / 60;
+  const x = c * (1 - Math.abs((hp % 2) - 1));
+  const [r, g, b] =
+    hp < 1 ? [c, x, 0] : hp < 2 ? [x, c, 0] : hp < 3 ? [0, c, x] :
+    hp < 4 ? [0, x, c] : hp < 5 ? [x, 0, c] : [c, 0, x];
+  const m = l - c / 2;
+  const to = (v) => Math.round((v + m) * 255).toString(16).padStart(2, "0");
+  return "#" + to(r) + to(g) + to(b);
+}
+export function categoryColor(s) {
+  const h = hashStr(String(s));
+  return hslHex(h % 360, 0.24, 0.38 + ((h >>> 9) % 10) / 100);  // hue spread; muted S, L 0.38–0.47
+}
+
 // ---- validation (pure, no fs) ----------------------------------------------
 export function validateGenesis(g) {
   const errors = [], warnings = [];
@@ -116,13 +137,28 @@ function buildCatalog(genesis) {
       id: r.id, name: r.name, terrain: r.terrain,
       adjacent: r.adjacent || [], label_at: r.label_at,
     })),
-    layers: genesis.layers || DEFAULT_LAYERS,
+    layers: (genesis.layers || DEFAULT_LAYERS).map((l) => bakeLayerColors(l, genesis.regions)),
   };
+}
+
+// Bake deterministic per-category colors into choropleths over an open,
+// store-owned vocabulary (`map.regions[].<field>`, e.g. terrain), so the colors
+// live in the data store beside the values and the renderer needs zero
+// knowledge of the vocabulary. Closed renderer-owned enums (palette "stance",
+// state-sourced overlays) are left untouched.
+function bakeLayerColors(layer, regions) {
+  const m = layer.type === "choropleth" && /^map\.regions\[\]\.(.+)$/.exec(layer.source || "");
+  if (!m) return layer;
+  const cats = [...new Set(regions.map((r) => r[m[1]]).filter((v) => v != null))];
+  const colors = {};
+  for (const c of cats) colors[c] = categoryColor(c);
+  const { palette, ...rest } = layer;   // drop the renderer-owned palette ref
+  return { ...rest, colors };
 }
 
 const DEFAULT_LAYERS = [
   { id: "graticule", name: "Grid",      type: "graticule", on: true },
-  { id: "terrain",   name: "Geography", type: "choropleth", source: "map.regions[].terrain", palette: "terrain", default: true },
+  { id: "terrain",   name: "Geography", type: "choropleth", source: "map.regions[].terrain", default: true },  // colors baked from the vocabulary at build time
   { id: "ownership", name: "Political", type: "choropleth", source: "state.map_overlay.ownership", palette: "stance" },
   { id: "unrest",    name: "Unrest",    type: "heatmap",    source: "state.map_overlay.unrest", ramp: "calm-crisis" },
   { id: "features",  name: "Features",  type: "icons",      source: "map.features", on: true },

@@ -60,7 +60,7 @@
   ],
   "layers": [
     { "id": "graticule", "name": "Grid",      "type": "graticule", "on": true },
-    { "id": "terrain",   "name": "Geography", "type": "choropleth", "source": "map.regions[].terrain",       "palette": "terrain", "default": true },
+    { "id": "terrain",   "name": "Geography", "type": "choropleth", "source": "map.regions[].terrain",       "colors": { "hilly coast": "#7a6a4a", "river kingdom": "#5a6a78", "mountains": "#6d6358", "mercantile coast": "#6a7a6a" }, "default": true },
     { "id": "ownership", "name": "Political",  "type": "choropleth", "source": "state.map_overlay.ownership", "palette": "stance" },
     { "id": "unrest",    "name": "Unrest",     "type": "heatmap",    "source": "state.map_overlay.unrest",    "ramp": "calm-crisis" },
     { "id": "features",  "name": "Features",   "type": "icons",      "source": "map.features", "on": true },
