@@ -16,13 +16,13 @@ const loadGenesis = (run) => {
 };
 
 test("genesis lever validates", () => {
-  const { genesis } = loadGenesis("genesis");
+  const { genesis } = loadGenesis("biopunk");
   const v = validateGenesis(genesis);
   assert.equal(v.ok, true, v.errors.join("; "));
 });
 
 test("buildArtifacts is deterministic (same input → byte-identical geometry)", () => {
-  const { genesis, raw } = loadGenesis("genesis");
+  const { genesis, raw } = loadGenesis("biopunk");
   const a = buildArtifacts(genesis, raw);
   const b = buildArtifacts(genesis, raw);
   assert.equal(JSON.stringify(a.geometry), JSON.stringify(b.geometry));
@@ -30,14 +30,14 @@ test("buildArtifacts is deterministic (same input → byte-identical geometry)",
 });
 
 test("all declared adjacencies are realized", () => {
-  const { genesis, raw } = loadGenesis("genesis");
+  const { genesis, raw } = loadGenesis("biopunk");
   const { summary } = buildArtifacts(genesis, raw);
   assert.deepEqual(summary.adjacency.missing, [], "missing declared adjacencies");
   assert.equal(summary.regions, genesis.regions.length);
 });
 
 test("shared borders are byte-identical from both regions", () => {
-  const { genesis, raw } = loadGenesis("genesis");
+  const { genesis, raw } = loadGenesis("biopunk");
   const { geometry } = buildArtifacts(genesis, raw);
   const polyKeys = {};
   for (const r of geometry.regions) polyKeys[r.id] = r.polygon.map(pkey);
@@ -54,7 +54,7 @@ test("shared borders are byte-identical from both regions", () => {
 });
 
 test("features and rivers are placed", () => {
-  const { genesis, raw } = loadGenesis("genesis");
+  const { genesis, raw } = loadGenesis("biopunk");
   const { geometry } = buildArtifacts(genesis, raw);
   assert.equal(geometry.rivers.length, (genesis.rivers || []).length);
   assert.equal(geometry.features.length, (genesis.features || []).length);

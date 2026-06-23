@@ -1,4 +1,4 @@
-# Lore — Genesis Run
+# Lore — Biopunk Run
 
 ## Canon Facts
 - World profile: information-age, Earth-like technological baseline with dense sensor grids, cloud governance, autonomous logistics, and contested data sovereignty.

@@ -49,7 +49,7 @@ help populate it:
    places features, and writes `geometry.json` + a catalog `map.json`. Geometry is written **once**
    and not changed per turn; regeneration is deterministic, so you may freely re-tune seeds and
    re-run while setting up. Schema/example: [`tools/mapgen/README.md`](../../../tools/mapgen/README.md),
-   `runs/genesis/genesis.json`.
+   `runs/biopunk/genesis.json`.
 2. **Run Config** — difficulty, sim depth, cadence, randomness, tone, victory/failure. Write
    `run-config.md`.
 3. **Nation Sheet** — build the player's nation (identity + starting stats consistent with the

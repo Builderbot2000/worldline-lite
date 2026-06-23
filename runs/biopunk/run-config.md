@@ -1,4 +1,4 @@
-# Run Config - Genesis
+# Run Config - Biopunk
 
 ## Difficulty
 - **Difficulty:** hard

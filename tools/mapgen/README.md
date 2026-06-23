@@ -25,7 +25,7 @@ re-tune seeds and re-run freely while setting up a world.
 You can also run it directly without MCP:
 
 ```sh
-node -e 'import("./tools/mapgen/generate.mjs").then(m => console.log(m.generate({ run: "genesis", root: process.cwd() })))'
+node -e 'import("./tools/mapgen/generate.mjs").then(m => console.log(m.generate({ run: "biopunk", root: process.cwd() })))'
 node --test tools/mapgen          # determinism + seam + adjacency tests
 ```
 
