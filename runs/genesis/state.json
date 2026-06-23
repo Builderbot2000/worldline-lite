@@ -1,0 +1,91 @@
+{
+  "schema": "worldline-state/v1",
+  "run": "genesis",
+  "world": "The Iron Retreat",
+  "turn": 0,
+  "date": "Late Dry Season Y0",
+  "status": "active",
+  "player": { "name": "Integrated Automatics Corporation", "region": "arlin" },
+
+  "economy": {
+    "treasury":      { "value": 420,  "delta": 0, "unit": "cr" },
+    "income":        { "value": 260,  "delta": 0, "unit": "cr/turn" },
+    "expenses":      { "value": 245,  "delta": 0, "unit": "cr/turn" },
+    "net_balance":   { "value": 0,    "delta": 0, "unit": "cr/turn" },
+    "debt":          { "value": 180,  "delta": 0, "unit": "cr" },
+    "gdp":           { "value": 2100, "delta": 0, "unit": "cr" },
+    "inflation":     { "value": 6,    "delta": 0, "unit": "%" },
+    "trade_balance": { "value": -15,  "delta": 0, "unit": "cr/turn" }
+  },
+
+  "population": {
+    "population": { "value": 240000, "delta": 0 },
+    "approval":   { "value": 46, "delta": 0 },
+    "stability":  { "value": 41, "delta": 0 },
+    "unrest":     { "value": 57, "delta": 0 },
+    "legitimacy": { "value": 52, "delta": 0 }
+  },
+
+  "military": {
+    "manpower_pool": { "value": 8500, "delta": 0 },
+    "logistics":     { "value": 52, "delta": 0 },
+    "doctrine":      "tier 3",
+    "upkeep":        { "value": 120, "unit": "cr/turn" },
+    "units": [
+      { "name": "Arlin Contract Legion",  "type": "infantry",          "qty": 2200, "delta": 0, "equip": 3, "readiness": 62, "region": "arlin" },
+      { "name": "Dome Security Cohorts",  "type": "garrison infantry", "qty": 1800, "delta": 0, "equip": 2, "readiness": 68, "region": "arlin" },
+      { "name": "Perimeter Drone Lances", "type": "drone cavalry",     "qty": 350,  "delta": 0, "equip": 3, "readiness": 55, "region": "arlin" }
+    ]
+  },
+
+  "resources": [
+    { "id": "pure_biomass",               "name": "pure biomass",   "stock": 740, "delta": 0, "prod": 110, "cons": 165, "strategic": true },
+    { "id": "potable_water_rights",       "name": "water rights",   "stock": 980, "delta": 0, "prod": 140, "cons": 155, "strategic": true },
+    { "id": "grid_stable_power",          "name": "grid power",     "stock": 620, "delta": 0, "prod": 130, "cons": 122, "strategic": true },
+    { "id": "structural_alloy_feedstock", "name": "alloy feedstock","stock": 410, "delta": 0, "prod": 58,  "cons": 64,  "strategic": true },
+    { "id": "verified_technical_labor",   "name": "tech labor",     "stock": 300, "delta": 0, "prod": 24,  "cons": 20,  "strategic": false }
+  ],
+
+  "diplomacy": {
+    "relations": [
+      { "power": "Helion Dome Compact",    "region": "helion",     "opinion": 5,   "delta": 0, "status": "neutral" },
+      { "power": "Brinewake Cartel",       "region": "brinewake",  "opinion": 12,  "delta": 0, "status": "neutral" },
+      { "power": "Aquifer Directorate",    "region": "aquifer",    "opinion": -8,  "delta": 0, "status": "wary" },
+      { "power": "Redline Security Front", "region": "redline",    "opinion": -20, "delta": 0, "status": "hostile" },
+      { "power": "Continuity Assembly",    "region": "continuity", "opinion": 3,   "delta": 0, "status": "neutral" }
+    ],
+    "treaties": []
+  },
+
+  "flags": [
+    { "id": "biomass_deficit_watch", "label": "Biomass deficit watch (−55/t)", "since_turn": 0, "severity": "warning" },
+    { "id": "water_deficit_watch",   "label": "Water deficit watch (−15/t)",   "since_turn": 0, "severity": "watch" },
+    { "id": "alloy_deficit_watch",   "label": "Alloy deficit watch (−6/t)",    "since_turn": 0, "severity": "watch" }
+  ],
+
+  "map_overlay": {
+    "ownership": {
+      "arlin":      "player",
+      "helion":     "neutral",
+      "brinewake":  "neutral",
+      "aquifer":    "neutral",
+      "redline":    "hostile",
+      "continuity": "neutral"
+    },
+    "unrest": {
+      "arlin":      57,
+      "helion":     22,
+      "brinewake":  35,
+      "aquifer":    28,
+      "redline":    74,
+      "continuity": 19
+    }
+  },
+
+  "changelog": [
+    "Turn 0 — Late Dry Season Y0: initialization baseline from nation-sheet",
+    "net_balance computed 0 cr/turn (income 260 − expenses 245 + trade −15)",
+    "demographics, military, diplomacy, research, resources initialized with zero deltas",
+    "flags: biomass_deficit_watch, water_deficit_watch, alloy_deficit_watch"
+  ]
+}

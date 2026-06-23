@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "worldline-mapgen": {
+      "command": "node",
+      "args": ["tools/mapgen/mcp-server.mjs"],
+      "env": {}
+    }
+  }
+}

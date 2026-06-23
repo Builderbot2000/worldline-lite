@@ -1,0 +1,87 @@
+{
+  "schema": "worldline-state/v1",
+  "run": "_example",
+  "world": "The Riven Coast",
+  "turn": 1,
+  "date": "Spring, Year 1",
+  "status": "active",
+  "player": { "name": "The March of Haldmark", "region": "haldmark" },
+
+  "economy": {
+    "treasury":      { "value": 1070, "delta": -130, "unit": "cr" },
+    "income":        { "value": 550,  "delta": 70,   "unit": "cr/turn" },
+    "expenses":      { "value": 410,  "delta": 0,    "unit": "cr/turn" },
+    "net_balance":   { "value": 140,  "delta": 0,    "unit": "cr/turn" },
+    "debt":          { "value": 400,  "delta": 0,    "unit": "cr" },
+    "gdp":           { "value": 6200, "delta": 0,    "unit": "cr" },
+    "inflation":     { "value": 3,    "delta": 0,    "unit": "%" },
+    "trade_balance": { "value": 90,   "delta": 30,   "unit": "cr/turn" }
+  },
+
+  "population": {
+    "population": { "value": 540000, "delta": 0 },
+    "approval":   { "value": 57, "delta": -1 },
+    "stability":  { "value": 62, "delta": 0 },
+    "unrest":     { "value": 25, "delta": 3 },
+    "legitimacy": { "value": 70, "delta": 0 }
+  },
+
+  "military": {
+    "manpower_pool": { "value": 14000, "delta": 0 },
+    "logistics":     { "value": 45, "delta": 0 },
+    "doctrine":      "tier 2",
+    "upkeep":        { "value": 240, "unit": "cr/turn" },
+    "units": [
+      { "name": "1st Haldmark Levy", "type": "infantry (pike)",     "qty": 4000, "delta": 0, "equip": 2, "readiness": 55, "region": "haldmark" },
+      { "name": "Saltgate Guard",    "type": "infantry (garrison)", "qty": 1500, "delta": 0, "equip": 3, "readiness": 70, "region": "haldmark" },
+      { "name": "Coast Wardens",     "type": "light cavalry",       "qty": 800,  "delta": 0, "equip": 2, "readiness": 60, "region": "haldmark" }
+    ]
+  },
+
+  "resources": [
+    { "id": "grain",  "name": "grain",  "stock": 2890, "delta": -110, "prod": 900, "cons": 860, "strategic": false },
+    { "id": "timber", "name": "timber", "stock": 1420, "delta": 20,   "prod": 220, "cons": 120, "strategic": false },
+    { "id": "iron",   "name": "iron",   "stock": 580,  "delta": -20,  "prod": 90,  "cons": 110, "strategic": true }
+  ],
+
+  "diplomacy": {
+    "relations": [
+      { "power": "Veska",         "region": "veska",   "opinion": -30, "delta": -5, "status": "hostile" },
+      { "power": "Adran League",  "region": "adran",   "opinion": 25,  "delta": 10, "status": "friendly" },
+      { "power": "Kelsdar Clans", "region": "kelsdar", "opinion": -5,  "delta": 0,  "status": "neutral" }
+    ],
+    "treaties": [
+      { "name": "Adran Trade Pact", "note": "trade clause only, no defensive obligation", "expires_turn": 9 }
+    ]
+  },
+
+  "flags": [
+    { "id": "veska_mobilizing",  "label": "Veska mobilizing", "since_turn": 1, "severity": "warning" },
+    { "id": "iron_deficit_watch", "label": "Iron deficit watch (~ -20/turn)", "since_turn": 1, "severity": "watch" }
+  ],
+
+  "map_overlay": {
+    "ownership": {
+      "haldmark": "player",
+      "veska":    "hostile",
+      "adran":    "friendly",
+      "kelsdar":  "neutral"
+    },
+    "unrest": {
+      "haldmark": 25,
+      "veska":    60,
+      "adran":    18,
+      "kelsdar":  40
+    }
+  },
+
+  "changelog": [
+    "treasury 1,200 → 1,070 (−130): net +70 less 200 cr crash-funding of Veil bastion",
+    "income 480 → 550 (+70): Adran pact (+40), Saltgate tariff (+30)",
+    "unrest 22 → 25 (+3): tariff rise",
+    "grain 3,000 → 2,890 (−110): cold spring cut the harvest (PARTIAL)",
+    "relations.Veska −25 → −30 (−5): levies massing near the Veil",
+    "relations.Adran +15 → +25 (+10), status → friendly: trade pact signed",
+    "flags: set veska_mobilizing; iron_deficit_watch noted"
+  ]
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worldline Lite — Renderer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header id="topbar">
+    <h1>Worldline&nbsp;Lite</h1>
+    <div id="run-meta">
+      <span id="world-name">—</span>
+      <span id="turn-badge">Turn —</span>
+      <span id="date-badge">—</span>
+    </div>
+    <div id="controls">
+      <label>Base
+        <select id="base-layer"></select>
+      </label>
+      <div id="overlay-toggles"></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="map-wrap">
+      <svg id="map" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div id="legend"></div>
+    </section>
+
+    <aside id="panels">
+      <div class="panel" id="panel-economy"><h2>Economy</h2><div class="body"></div></div>
+      <div class="panel" id="panel-resources"><h2>Resources</h2><div class="body"></div></div>
+      <div class="panel" id="panel-military"><h2>Military</h2><div class="body"></div></div>
+      <div class="panel" id="panel-diplomacy"><h2>Diplomacy</h2><div class="body"></div></div>
+      <div class="panel" id="panel-flags"><h2>Flags</h2><div class="body"></div></div>
+    </aside>
+  </main>
+
+  <div id="error" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

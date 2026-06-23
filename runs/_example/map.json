@@ -1,0 +1,70 @@
+{
+  "schema": "worldline-map/v1",
+  "name": "The Riven Coast",
+  "style": "continental-coast",
+  "viewBox": [0, 0, 100, 100],
+  "space": {
+    "id": "riven/v1",
+    "extent": [0, 0, 100, 100],
+    "units": "leagues",
+    "y_axis": "down",
+    "grid": { "step": 10 },
+    "detail": { "depth": 5, "coast": 0.11, "border": 0.05 }
+  },
+  "sea": [
+    [0, 0], [18, 0], [16, 30], [10, 55], [14, 78], [22, 100], [0, 100]
+  ],
+  "regions": [
+    {
+      "id": "haldmark",
+      "name": "Haldmark",
+      "terrain": "hilly coast",
+      "polygon": [[18, 0], [50, 4], [52, 35], [50, 70], [22, 100], [14, 78], [10, 55], [16, 30]],
+      "adjacent": ["veska", "kelsdar", "adran"],
+      "label_at": [30, 50]
+    },
+    {
+      "id": "veska",
+      "name": "Veska",
+      "terrain": "river kingdom",
+      "polygon": [[54, 6], [92, 4], [96, 50], [90, 88], [54, 72], [56, 36]],
+      "adjacent": ["haldmark", "kelsdar"],
+      "label_at": [74, 44]
+    },
+    {
+      "id": "kelsdar",
+      "name": "Kelsdar Clans",
+      "terrain": "mountains",
+      "polygon": [[18, 0], [92, 0], [92, 4], [54, 6], [50, 4]],
+      "adjacent": ["haldmark", "veska"],
+      "label_at": [60, 2]
+    },
+    {
+      "id": "adran",
+      "name": "Adran League",
+      "terrain": "mercantile coast",
+      "polygon": [[22, 100], [50, 70], [54, 72], [90, 88], [92, 100]],
+      "adjacent": ["haldmark", "veska"],
+      "label_at": [60, 90]
+    }
+  ],
+  "features": [
+    { "id": "saltgate", "name": "Saltgate", "kind": "harbor", "at": [17, 56] },
+    { "id": "kelsdar-passes", "name": "Kelsdar Passes", "kind": "chokepoint", "at": [40, 7] },
+    {
+      "id": "veil",
+      "name": "The Veil",
+      "kind": "river",
+      "path": [[52, 6], [52, 35], [51, 55], [52, 72]]
+    }
+  ],
+  "layers": [
+    { "id": "graticule", "name": "Grid",      "type": "graticule", "on": true },
+    { "id": "terrain",   "name": "Geography", "type": "choropleth", "source": "map.regions[].terrain",       "palette": "terrain", "default": true },
+    { "id": "ownership", "name": "Political",  "type": "choropleth", "source": "state.map_overlay.ownership", "palette": "stance" },
+    { "id": "unrest",    "name": "Unrest",     "type": "heatmap",    "source": "state.map_overlay.unrest",    "ramp": "calm-crisis" },
+    { "id": "features",  "name": "Features",   "type": "icons",      "source": "map.features", "on": true },
+    { "id": "armies",    "name": "Armies",     "type": "markers",    "source": "state.military.units", "group_by": "region", "size_by": "qty", "on": true },
+    { "id": "relations", "name": "Diplomacy",  "type": "flow",       "source": "state.diplomacy.relations", "from": "state.player.region", "to": "region", "palette": "stance", "color_by": "status", "label_by": "opinion" }
+  ]
+}

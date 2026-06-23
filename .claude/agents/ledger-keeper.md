@@ -36,6 +36,13 @@ numbers stay consistent across a stateless agent team, it's because you enforced
 5. **Write** the updated `state-ledger.md`, append a dated turn entry to its changelog, and
    return a `commit` block (per `io-conventions.md`) summarizing applied values, adjustments,
    flags, and conflicts.
+6. **Emit the renderer feed.** Write `runs/<run>/state.json` (schema `worldline-state/v1`) as a
+   structured mirror of the committed ledger — the Part-3 renderer reads it. Keep it in lockstep
+   with the ledger every commit: each numeric field as `{ "value", "delta", "unit"? }`; bind units
+   and relations to map regions via `region` ids; set `map_overlay.ownership` per region from
+   diplomatic stance (`player|hostile|friendly|neutral`). The static `map.json` (geometry) is
+   authored once at genesis and you do **not** touch it. Format and example:
+   [`renderer/README.md`](../../renderer/README.md), [`runs/_example/state.json`](../../runs/_example/state.json).
 
 ## Rules
 - **Never guess.** If two deltas are irreconcilable or a referenced roll is missing, do NOT
