@@ -174,24 +174,39 @@ const LAYER_TYPES = {
 
 function drawMap() {
   const svg = document.getElementById("map");
-  svg.innerHTML = DEFS;                                  // re-inject filters/patterns after clearing
-  svg.setAttribute("viewBox", getSpace().extent.join(" "));
+  const [ex, ey, ew, eh] = getSpace().extent;
+  // Scale factor relative to the 100-unit baseline design so CSS --u values
+  // (stroke widths, font sizes, dash arrays) grow proportionally with map size.
+  const scale = Math.max(ew, eh) / 100;
 
-  drawSea(svg);
-  drawCoastHalo(svg);                                    // soft shallows under the shoreline
+  // Inject scale-aware defs plus an extent-specific clip region.
+  // The clipPath is defined in world coordinates so it tracks pan/zoom correctly.
+  svg.innerHTML = makeDefs(scale) +
+    `<clipPath id="map-clip"><rect x="${ex}" y="${ey}" width="${ew}" height="${eh}"/></clipPath>`;
+  svg.setAttribute("viewBox", [ex, ey, ew, eh].join(" "));
+
+  // All geography draws into a clipped group so no refined edge leaks past the border.
+  // --u is the CSS scale unit; all SVG-space CSS values are written as calc(var(--u,1)*base).
+  const g = document.createElementNS(SVGNS, "g");
+  g.setAttribute("clip-path", "url(#map-clip)");
+  g.style.setProperty("--u", scale);
+  svg.appendChild(g);
+
+  drawSea(g);
+  drawCoastHalo(g);                                      // soft shallows under the shoreline
 
   const layers = getLayers();
   const base = layers.find((l) => l.id === activeBase);
-  if (base) LAYER_TYPES[base.type](svg, base);
+  if (base) LAYER_TYPES[base.type](g, base);
 
-  drawRegionLabels(svg);
-  drawGrain(svg);                                        // paper texture over land, under symbols
-  drawBoundaries(svg);                                   // refined coastlines + political borders
+  drawRegionLabels(g);
+  drawGrain(g);                                          // paper texture over land, under symbols
+  drawBoundaries(g);                                     // refined coastlines + political borders
 
   layers
     .filter((l) => l.id !== activeBase && activeOverlays.has(l.id) && LAYER_TYPES[l.type])
     .sort((a, b) => (OVERLAY_Z[a.type] ?? 0) - (OVERLAY_Z[b.type] ?? 0))
-    .forEach((l) => LAYER_TYPES[l.type](svg, l));
+    .forEach((l) => LAYER_TYPES[l.type](g, l));
 
   renderLegend(base);
 }
@@ -697,18 +712,24 @@ function showError(msg) {
 }
 
 // ---- SVG <defs> (re-injected each draw, since we clear innerHTML) -----------
-const DEFS = `
+// scale = max(ew,eh)/100 so patterns and filters stay proportional at any map size.
+function makeDefs(scale) {
+  const u = scale || 1;
+  const sz = +(3 * u).toFixed(2);
+  const bf = +(0.9 / u).toFixed(4);  // smaller frequency → larger grain at larger scale
+  return `
 <defs>
   <filter id="paper" x="0" y="0" width="100%" height="100%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/>
+    <feTurbulence type="fractalNoise" baseFrequency="${bf}" numOctaves="2" stitchTiles="stitch" result="n"/>
     <feColorMatrix in="n" type="matrix"
       values="0 0 0 0 0.93  0 0 0 0 0.89  0 0 0 0 0.82  0 0 0 0.5 0"/>
   </filter>
   <filter id="land-shadow" x="-20%" y="-20%" width="140%" height="140%">
-    <feDropShadow dx="0" dy="0.6" stdDeviation="0.7" flood-color="#000" flood-opacity="0.35"/>
+    <feDropShadow dx="0" dy="${+(0.6 * u).toFixed(2)}" stdDeviation="${+(0.7 * u).toFixed(2)}" flood-color="#000" flood-opacity="0.35"/>
   </filter>
-  <pattern id="nodata" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-    <rect width="3" height="3" fill="#2b2519"/>
-    <line x1="0" y1="0" x2="0" y2="3" stroke="#3a3022" stroke-width="0.8"/>
+  <pattern id="nodata" width="${sz}" height="${sz}" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <rect width="${sz}" height="${sz}" fill="#2b2519"/>
+    <line x1="0" y1="0" x2="0" y2="${sz}" stroke="#3a3022" stroke-width="${+(0.8 * u).toFixed(2)}"/>
   </pattern>
 </defs>`;
+}

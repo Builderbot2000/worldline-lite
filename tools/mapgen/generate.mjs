@@ -75,7 +75,13 @@ export function buildArtifacts(authored, rawString) {
   // input_hash below still hashes the AUTHORED lever, not the resolved one.
   const genesis = resolveSeeds(authored);
   const grown = growRegions(genesis);
-  const detail = genesis.space.detail;
+
+  // Scale the default refinement amplitude cap with map size so borders on large
+  // maps have proportional wiggle. Authors can still pin an explicit value in
+  // space.detail.cap to override.
+  const [gx0, gy0, gw, gh] = genesis.space.extent;
+  const scaledCap = Math.max(25, Math.min(gw, gh) * 0.25);
+  const detail = { cap: scaledCap, ...genesis.space.detail };
   const geo = computeGeometry(grown.parts, detail);
 
   const labelAt = {};
@@ -90,20 +96,28 @@ export function buildArtifacts(authored, rawString) {
   const input_hash = "fnv1a:" + hashStr(rawString != null ? rawString : JSON.stringify(genesis))
     .toString(16).padStart(8, "0");
 
+  // Clamp every output point to the declared extent, then round.
+  // refineEdge displaces midpoints with no bounds check, so coast edges near
+  // the frame can produce points just outside the world border.
+  const clamp2 = ([px, py]) => round2([
+    Math.max(gx0, Math.min(gx0 + gw, px)),
+    Math.max(gy0, Math.min(gy0 + gh, py)),
+  ]);
+
   const geometry = {
     schema: "worldline-geo/v1",
     generated_from: "genesis.json",
     input_hash,
     name: genesis.name,
     space: genesis.space,
-    sea: geo.sea ? geo.sea.map(round2) : null,
+    sea: geo.sea ? geo.sea.map(clamp2) : null,
     regions: genesis.regions
       .filter((r) => geo.regions[r.id])
-      .map((r) => ({ id: r.id, polygon: geo.regions[r.id].map(round2), label_at: labelAt[r.id] })),
+      .map((r) => ({ id: r.id, polygon: geo.regions[r.id].map(clamp2), label_at: labelAt[r.id] })),
     boundaries: geo.boundaries.map((e) => ({
-      key: e.key, cls: e.cls, parts: e.parts, path: e.path.map(round2),
+      key: e.key, cls: e.cls, parts: e.parts, path: e.path.map(clamp2),
     })),
-    rivers,
+    rivers: rivers.map((r) => ({ ...r, path: r.path.map(clamp2) })),
     features,
   };
 

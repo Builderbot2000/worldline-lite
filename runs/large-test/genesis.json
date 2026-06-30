@@ -1,0 +1,26 @@
+{
+  "schema": "worldline-geo-seed/v1",
+  "seed": 7777,
+  "name": "The Shattered Reach",
+  "space": {
+    "extent": [0, 0, 500, 500],
+    "y_axis": "down",
+    "detail": { "depth": 5, "coast": 0.09, "border": 0.045 }
+  },
+  "sea": { "edges": ["W", "S"], "inset": 60, "fraction": 0.25 },
+  "regions": [
+    { "id": "a", "name": "Ironvast",    "size": "large",  "terrain": "highlands",  "adjacent": ["b","c","d"] },
+    { "id": "b", "name": "Saltmoor",    "size": "medium", "terrain": "coastal wetlands", "adjacent": ["a","c","e"] },
+    { "id": "c", "name": "Duskspire",   "size": "large",  "terrain": "arid plateau","adjacent": ["a","b","d","f"] },
+    { "id": "d", "name": "Greymantle",  "size": "huge",   "terrain": "temperate forest", "adjacent": ["a","c","f","g"] },
+    { "id": "e", "name": "Brineshell",  "size": "small",  "terrain": "drowned coast",    "adjacent": ["b","c"] },
+    { "id": "f", "name": "Ashveil",     "size": "medium", "terrain": "volcanic belt","adjacent": ["c","d","g"] },
+    { "id": "g", "name": "Coldmarch",   "size": "large",  "terrain": "tundra",      "adjacent": ["d","f"] }
+  ],
+  "rivers": [],
+  "features": [
+    { "id": "a-city",  "name": "Ironhold",    "kind": "city",       "region": "a" },
+    { "id": "b-port",  "name": "Saltmoor Bay","kind": "harbor",     "region": "b" },
+    { "id": "choke1",  "name": "Dusk Gate",   "kind": "chokepoint", "between": ["c","d"] }
+  ]
+}

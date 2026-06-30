@@ -58,40 +58,40 @@ main { display: flex; flex: 1; min-height: 0; }
 
 .sea { fill: var(--sea); }
 /* Refined boundaries (drawn as their own pass over the fills). */
-.coast-halo  { fill: none; stroke: #7fb0c8; stroke-width: 1.8; stroke-linejoin: round;
+.coast-halo  { fill: none; stroke: #7fb0c8; stroke-width: calc(var(--u, 1) * 1.8); stroke-linejoin: round;
   stroke-linecap: round; opacity: 0.22; }
-.coastline   { fill: none; stroke: #20303a; stroke-width: 0.45; stroke-linejoin: round;
+.coastline   { fill: none; stroke: #20303a; stroke-width: calc(var(--u, 1) * 0.45); stroke-linejoin: round;
   stroke-linecap: round; opacity: 0.9; }
-.border-line { fill: none; stroke: #2a2114; stroke-width: 0.32; stroke-linejoin: round;
-  stroke-dasharray: 1.4 1.1; opacity: 0.7; }
+.border-line { fill: none; stroke: #2a2114; stroke-width: calc(var(--u, 1) * 0.32); stroke-linejoin: round;
+  stroke-dasharray: calc(var(--u, 1) * 1.4) calc(var(--u, 1) * 1.1); opacity: 0.7; }
 
 .region { stroke: none; stroke-linejoin: round;
   filter: url(#land-shadow); transition: filter 0.15s, opacity 0.15s; }
 .region:hover { filter: brightness(1.18); }
-.region-label { fill: var(--ink); font-size: 3px; text-anchor: middle; pointer-events: none;
-  letter-spacing: 0.08px; font-variant: small-caps;
-  paint-order: stroke; stroke: #000; stroke-width: 0.5px; }
+.region-label { fill: var(--ink); font-size: calc(var(--u, 1) * 3px); text-anchor: middle; pointer-events: none;
+  letter-spacing: calc(var(--u, 1) * 0.08px); font-variant: small-caps;
+  paint-order: stroke; stroke: #000; stroke-width: calc(var(--u, 1) * 0.5px); }
 /* Paper grain laid over the land for a printed-map feel. */
 .grain { fill: url(#paper); opacity: 0.10; pointer-events: none; mix-blend-mode: overlay; }
-.river { fill: none; stroke: #3d6b86; stroke-width: 1.1; stroke-linecap: round; opacity: 0.9; }
+.river { fill: none; stroke: #3d6b86; stroke-width: calc(var(--u, 1) * 1.1); stroke-linecap: round; opacity: 0.9; }
 
 /* Graticule — the coordinate system made visible */
-.grid-line { stroke: #6f5d3e; stroke-width: 0.12; opacity: 0.35; }
-.grid-frame { fill: none; stroke: #6f5d3e; stroke-width: 0.5; opacity: 0.75; }
-.grid-label { fill: var(--muted); font-size: 1.7px; opacity: 0.7; pointer-events: none; }
+.grid-line { stroke: #6f5d3e; stroke-width: calc(var(--u, 1) * 0.12); opacity: 0.35; }
+.grid-frame { fill: none; stroke: #6f5d3e; stroke-width: calc(var(--u, 1) * 0.5); opacity: 0.75; }
+.grid-label { fill: var(--muted); font-size: calc(var(--u, 1) * 1.7px); opacity: 0.7; pointer-events: none; }
 .grid-label.top { text-anchor: middle; }
 .grid-label.left { text-anchor: end; }
 
 /* Diplomacy / flow arrows */
-.flow-line { stroke-width: 0.7; opacity: 0.85; stroke-linecap: round; }
+.flow-line { stroke-width: calc(var(--u, 1) * 0.7); opacity: 0.85; stroke-linecap: round; }
 .flow polygon { opacity: 0.9; }
-.flow-label { font-size: 2.4px; text-anchor: middle; pointer-events: none; font-weight: bold;
-  paint-order: stroke; stroke: #000; stroke-width: 0.5px; }
-.feature-icon { font-size: 3.2px; text-anchor: middle; pointer-events: none; }
-.feature-label { fill: var(--muted); font-size: 2.2px; text-anchor: middle; pointer-events: none;
-  paint-order: stroke; stroke: #000; stroke-width: 0.4px; }
-.unit-marker { fill: var(--ink); stroke: #000; stroke-width: 0.3; }
-.unit-count { fill: #000; font-size: 2.2px; text-anchor: middle; font-weight: bold; pointer-events: none; }
+.flow-label { font-size: calc(var(--u, 1) * 2.4px); text-anchor: middle; pointer-events: none; font-weight: bold;
+  paint-order: stroke; stroke: #000; stroke-width: calc(var(--u, 1) * 0.5px); }
+.feature-icon { font-size: calc(var(--u, 1) * 3.2px); text-anchor: middle; pointer-events: none; }
+.feature-label { fill: var(--muted); font-size: calc(var(--u, 1) * 2.2px); text-anchor: middle; pointer-events: none;
+  paint-order: stroke; stroke: #000; stroke-width: calc(var(--u, 1) * 0.4px); }
+.unit-marker { fill: var(--ink); stroke: #000; stroke-width: calc(var(--u, 1) * 0.3); }
+.unit-count { fill: #000; font-size: calc(var(--u, 1) * 2.2px); text-anchor: middle; font-weight: bold; pointer-events: none; }
 
 #legend {
   position: absolute; left: 12px; bottom: 12px;

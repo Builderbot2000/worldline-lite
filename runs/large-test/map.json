@@ -1,0 +1,152 @@
+{
+  "schema": "worldline-map/v1",
+  "name": "The Shattered Reach",
+  "viewBox": [0, 0, 500, 500],
+  "geometry": "geometry.json",
+  "space": {
+    "extent": [0, 0, 500, 500],
+    "y_axis": "down",
+    "detail": {
+      "depth": 5,
+      "coast": 0.09,
+      "border": 0.045
+    }
+  },
+  "regions": [
+    {
+      "id": "a",
+      "name": "Ironvast",
+      "terrain": "highlands",
+      "adjacent": [
+        "b",
+        "c",
+        "d"
+      ]
+    },
+    {
+      "id": "b",
+      "name": "Saltmoor",
+      "terrain": "coastal wetlands",
+      "adjacent": [
+        "a",
+        "c",
+        "e"
+      ]
+    },
+    {
+      "id": "c",
+      "name": "Duskspire",
+      "terrain": "arid plateau",
+      "adjacent": [
+        "a",
+        "b",
+        "d",
+        "f"
+      ]
+    },
+    {
+      "id": "d",
+      "name": "Greymantle",
+      "terrain": "temperate forest",
+      "adjacent": [
+        "a",
+        "c",
+        "f",
+        "g"
+      ]
+    },
+    {
+      "id": "e",
+      "name": "Brineshell",
+      "terrain": "drowned coast",
+      "adjacent": [
+        "b",
+        "c"
+      ]
+    },
+    {
+      "id": "f",
+      "name": "Ashveil",
+      "terrain": "volcanic belt",
+      "adjacent": [
+        "c",
+        "d",
+        "g"
+      ]
+    },
+    {
+      "id": "g",
+      "name": "Coldmarch",
+      "terrain": "tundra",
+      "adjacent": [
+        "d",
+        "f"
+      ]
+    }
+  ],
+  "layers": [
+    {
+      "id": "graticule",
+      "name": "Grid",
+      "type": "graticule",
+      "on": true
+    },
+    {
+      "id": "terrain",
+      "name": "Geography",
+      "type": "choropleth",
+      "source": "map.regions[].terrain",
+      "default": true,
+      "colors": {
+        "highlands": "#91596b",
+        "coastal wetlands": "#6b578e",
+        "arid plateau": "#7c4e7e",
+        "temperate forest": "#8e6a57",
+        "drowned coast": "#4a6178",
+        "volcanic belt": "#4f8272",
+        "tundra": "#855184"
+      }
+    },
+    {
+      "id": "ownership",
+      "name": "Political",
+      "type": "choropleth",
+      "source": "state.map_overlay.ownership",
+      "palette": "stance"
+    },
+    {
+      "id": "unrest",
+      "name": "Unrest",
+      "type": "heatmap",
+      "source": "state.map_overlay.unrest",
+      "ramp": "calm-crisis"
+    },
+    {
+      "id": "features",
+      "name": "Features",
+      "type": "icons",
+      "source": "map.features",
+      "on": true
+    },
+    {
+      "id": "armies",
+      "name": "Forces",
+      "type": "markers",
+      "source": "state.military.units",
+      "group_by": "region",
+      "size_by": "qty",
+      "on": true
+    },
+    {
+      "id": "relations",
+      "name": "Diplomacy",
+      "type": "flow",
+      "source": "state.diplomacy.relations",
+      "from": "state.player.region",
+      "to": "region",
+      "palette": "stance",
+      "color_by": "status",
+      "label_by": "opinion"
+    }
+  ]
+}
