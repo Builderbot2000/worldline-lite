@@ -1,0 +1,156 @@
+{
+  "schema": "worldline-map/v1",
+  "name": "Sample SAMPLE-C",
+  "style": "climate-fractured-globe",
+  "viewBox": [0, 0, 100, 100],
+  "geometry": "geometry.json",
+  "space": {
+    "id": "iron-retreat/v1",
+    "extent": [0, 0, 100, 100],
+    "units": "grid-sectors",
+    "y_axis": "down",
+    "grid": {
+      "step": 10
+    },
+    "detail": {
+      "depth": 5,
+      "coast": 0.09,
+      "border": 0.045,
+      "cap": 25
+    }
+  },
+  "regions": [
+    {
+      "id": "arlin",
+      "name": "Arlin Dome",
+      "terrain": "arid inland corridor",
+      "adjacent": [
+        "helion",
+        "brinewake",
+        "aquifer",
+        "redline",
+        "continuity"
+      ],
+      "label_at": [48, 52]
+    },
+    {
+      "id": "helion",
+      "name": "Helion Dome Compact",
+      "terrain": "northern megadomes",
+      "adjacent": [
+        "arlin",
+        "brinewake",
+        "aquifer"
+      ],
+      "label_at": [56, 10]
+    },
+    {
+      "id": "brinewake",
+      "name": "Brinewake Cartel",
+      "terrain": "drowned coastal arc",
+      "adjacent": [
+        "arlin",
+        "helion",
+        "redline"
+      ],
+      "label_at": [21, 44]
+    },
+    {
+      "id": "aquifer",
+      "name": "Aquifer Directorate",
+      "terrain": "inland borefields",
+      "adjacent": [
+        "arlin",
+        "helion",
+        "continuity"
+      ],
+      "label_at": [85, 44]
+    },
+    {
+      "id": "redline",
+      "name": "Redline Security Front",
+      "terrain": "drought belt",
+      "adjacent": [
+        "arlin",
+        "brinewake",
+        "continuity"
+      ],
+      "label_at": [40, 92]
+    },
+    {
+      "id": "continuity",
+      "name": "Continuity Assembly",
+      "terrain": "clinical enclaves",
+      "adjacent": [
+        "arlin",
+        "aquifer",
+        "redline"
+      ],
+      "label_at": [84, 86]
+    }
+  ],
+  "layers": [
+    {
+      "id": "graticule",
+      "name": "Grid",
+      "type": "graticule",
+      "on": true
+    },
+    {
+      "id": "terrain",
+      "name": "Geography",
+      "type": "choropleth",
+      "source": "map.regions[].terrain",
+      "default": true,
+      "colors": {
+        "arid inland corridor": "#848e57",
+        "northern megadomes": "#8e6a57",
+        "drowned coastal arc": "#8e6157",
+        "inland borefields": "#76578e",
+        "drought belt": "#55878b",
+        "clinical enclaves": "#4f7582"
+      }
+    },
+    {
+      "id": "ownership",
+      "name": "Political",
+      "type": "choropleth",
+      "source": "state.map_overlay.ownership",
+      "palette": "stance"
+    },
+    {
+      "id": "unrest",
+      "name": "Unrest",
+      "type": "heatmap",
+      "source": "state.map_overlay.unrest",
+      "ramp": "calm-crisis"
+    },
+    {
+      "id": "features",
+      "name": "Features",
+      "type": "icons",
+      "source": "map.features",
+      "on": true
+    },
+    {
+      "id": "armies",
+      "name": "Forces",
+      "type": "markers",
+      "source": "state.military.units",
+      "group_by": "region",
+      "size_by": "qty",
+      "on": true
+    },
+    {
+      "id": "relations",
+      "name": "Diplomacy",
+      "type": "flow",
+      "source": "state.diplomacy.relations",
+      "from": "state.player.region",
+      "to": "region",
+      "palette": "stance",
+      "color_by": "status",
+      "label_by": "opinion"
+    }
+  ]
+}

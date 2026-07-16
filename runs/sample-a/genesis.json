@@ -1,0 +1,191 @@
+{
+    "schema":  "worldline-geo-seed/v1",
+    "seed":  1337,
+    "name":  "Sample SAMPLE-A",
+    "style":  "climate-fractured-globe",
+    "space":  {
+                  "id":  "iron-retreat/v1",
+                  "extent":  [
+                                 0,
+                                 0,
+                                 100,
+                                 100
+                             ],
+                  "units":  "grid-sectors",
+                  "y_axis":  "down",
+                  "grid":  {
+                               "step":  10
+                           },
+                  "detail":  {
+                                 "depth":  5,
+                                 "coast":  0.09,
+                                 "border":  0.045,
+                                 "cap":  25
+                             }
+              },
+    "sea":  {
+                "edges":  [
+                              "W"
+                          ],
+                "inset":  12,
+                "fraction":  0.18
+            },
+    "regions":  [
+                    {
+                        "id":  "arlin",
+                        "name":  "Arlin Dome",
+                        "terrain":  "arid inland corridor",
+                        "seed":  [
+                                     48,
+                                     52
+                                 ],
+                        "weight":  1.3,
+                        "adjacent":  [
+                                         "helion",
+                                         "brinewake",
+                                         "aquifer",
+                                         "redline",
+                                         "continuity"
+                                     ],
+                        "label_at":  [
+                                         48,
+                                         52
+                                     ]
+                    },
+                    {
+                        "id":  "helion",
+                        "name":  "Helion Dome Compact",
+                        "terrain":  "northern megadomes",
+                        "seed":  [
+                                     56,
+                                     10
+                                 ],
+                        "weight":  1.4,
+                        "adjacent":  [
+                                         "arlin",
+                                         "brinewake",
+                                         "aquifer"
+                                     ],
+                        "label_at":  [
+                                         56,
+                                         10
+                                     ]
+                    },
+                    {
+                        "id":  "brinewake",
+                        "name":  "Brinewake Cartel",
+                        "terrain":  "drowned coastal arc",
+                        "seed":  [
+                                     21,
+                                     44
+                                 ],
+                        "weight":  1.1,
+                        "adjacent":  [
+                                         "arlin",
+                                         "helion",
+                                         "redline"
+                                     ],
+                        "label_at":  [
+                                         21,
+                                         44
+                                     ]
+                    },
+                    {
+                        "id":  "aquifer",
+                        "name":  "Aquifer Directorate",
+                        "terrain":  "inland borefields",
+                        "seed":  [
+                                     85,
+                                     44
+                                 ],
+                        "weight":  1.2,
+                        "adjacent":  [
+                                         "arlin",
+                                         "helion",
+                                         "continuity"
+                                     ],
+                        "label_at":  [
+                                         85,
+                                         44
+                                     ]
+                    },
+                    {
+                        "id":  "redline",
+                        "name":  "Redline Security Front",
+                        "terrain":  "drought belt",
+                        "seed":  [
+                                     40,
+                                     92
+                                 ],
+                        "weight":  1.0,
+                        "adjacent":  [
+                                         "arlin",
+                                         "brinewake",
+                                         "continuity"
+                                     ],
+                        "label_at":  [
+                                         40,
+                                         92
+                                     ]
+                    },
+                    {
+                        "id":  "continuity",
+                        "name":  "Continuity Assembly",
+                        "terrain":  "clinical enclaves",
+                        "seed":  [
+                                     84,
+                                     86
+                                 ],
+                        "weight":  1.1,
+                        "adjacent":  [
+                                         "arlin",
+                                         "aquifer",
+                                         "redline"
+                                     ],
+                        "label_at":  [
+                                         84,
+                                         86
+                                     ]
+                    }
+                ],
+    "rivers":  [
+                   {
+                       "id":  "desal-pipeline",
+                       "name":  "Desal Corridor",
+                       "from":  "aquifer",
+                       "mouth":  "E"
+                   }
+               ],
+    "features":  [
+                     {
+                         "id":  "arlin-capital",
+                         "name":  "Arlin",
+                         "kind":  "city",
+                         "region":  "arlin"
+                     },
+                     {
+                         "id":  "salvage-lanes",
+                         "name":  "Salvage Lanes",
+                         "kind":  "harbor",
+                         "region":  "brinewake"
+                     },
+                     {
+                         "id":  "pipeline-choke",
+                         "name":  "Pipeline Choke",
+                         "kind":  "chokepoint",
+                         "between":  [
+                                         "aquifer",
+                                         "arlin"
+                                     ]
+                     },
+                     {
+                         "id":  "migration-funnel",
+                         "name":  "Migration Funnels",
+                         "kind":  "chokepoint",
+                         "between":  [
+                                         "redline",
+                                         "arlin"
+                                     ]
+                     }
+                 ]
+}
